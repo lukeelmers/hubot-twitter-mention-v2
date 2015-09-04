@@ -12,6 +12,7 @@
 #   HUBOT_TWITTER_ACCESS_TOKEN_SECRET
 #   HUBOT_TWITTER_MENTION_QUERY
 #   HUBOT_TWITTER_MENTION_ROOM
+#   HUBOT_TWITTER_MENTION_USER_EXCLUDE
 #
 # Commands:
 #   none
@@ -22,6 +23,7 @@
 
 TWIT = require "twit"
 MENTION_ROOM = process.env.HUBOT_TWITTER_MENTION_ROOM || "#general"
+MENTION_USER_EXCLUDE = process.env.HUBOT_TWITTER_MENTION_USER_EXCLUDE || false
 MAX_TWEETS = 5
 
 config =
@@ -52,8 +54,9 @@ module.exports = (robot) ->
       if data.statuses? and data.statuses.length > 0
         robot.brain.data.last_tweet = data.statuses[0].id_str
         for tweet in data.statuses.reverse()
-          message = "Tweet Alert: http://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
-          robot.messageRoom MENTION_ROOM, message
+          if tweet.user.screen_name !== MENTION_USER_EXCLUDE
+            message = "Tweet Alert: http://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
+            robot.messageRoom MENTION_ROOM, message
 
     setTimeout (->
       doAutomaticSearch(robot)
