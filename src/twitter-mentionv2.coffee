@@ -54,7 +54,7 @@ module.exports = (robot) ->
       if data.statuses? and data.statuses.length > 0
         robot.brain.data.last_tweet = data.statuses[0].id_str
         for tweet in data.statuses.reverse()
-          if tweet.user.screen_name.toLowerCase() != MENTION_USER_EXCLUDE.toLowerCase()
+          if tweet.user.screen_name.toLowerCase() != MENTION_USER_EXCLUDE.toLowerCase() and tweet.retweeted != true
             message = "Tweet Alert: http://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
             robot.messageRoom MENTION_ROOM, message
 
